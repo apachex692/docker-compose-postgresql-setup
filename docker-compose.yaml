@@ -1,0 +1,40 @@
+# Author: Sakthi Santhosh
+# Created on: 04/05/2024
+#
+# Docker Compose for PostgreSQL Setup
+services:
+  postgres:
+    image: postgres:16.2-alpine
+    restart: always
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${DOCKER_DB_USER}
+      POSTGRES_PASSWORD: ${DOCKER_DB_PASSWORD}
+    networks:
+      - db_network
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${DOCKER_PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${DOCKER_PGADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - 8080:8080
+    networks:
+      - db_network
+
+volumes:
+  db_data:
+    name: postgresql_data
+
+networks:
+  db_network:
+    driver: bridge
+    name: postgresql_network
